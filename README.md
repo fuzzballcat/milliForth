@@ -26,7 +26,7 @@ FORTH itself will not be explained here (prior understanding assumed).  Being so
 | `exit` | `( r:addr -- )` | Pop from the return stack, resume execution at the popped address |
 | `key` | `( -- key )` | Read a keystroke |
 | `emit` | `( char -- )` | Print out an ASCII character |
-| `state@` | `( -- state@ )` | The "state struct" pointer.  The cells of this struct are, in order: <ul><li>`state`: The state of the interpreter (0 = compile words, 1 = execute words)</li><li>`>in`: Pointer to the current offset into the terminal input buffer</li><li>`here`: The pointer to the next available space in the dictionary</li><li>`latest`: The pointer to the most recent dictionary space</li></ul> |
+| `state@` | `( -- state@ )` | The "state struct" pointer.  The cells of this struct are, in order: <ul><li>`state`: The state of the interpreter (0 = compile words, 1 = execute words)</li><li>`>in`: Pointer to the current offset into the terminal input buffer</li><li>`latest`: The pointer to the most recent dictionary space</li><li>`here`: The pointer to the next available space in the dictionary</li></ul> |
 
 On a fundamental level, milliFORTH the same FORTH as implemented by sectorFORTH, with a few modifications:
 
