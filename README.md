@@ -2,7 +2,7 @@
 A FORTH in 422 bytes — the smallest real programming language ever, as of yet.
 
 ![milliFORTH_justhelloworld](https://github.com/fuzzballcat/milliForth/assets/57006511/ef3d48cf-1581-4574-8625-8d97b00acaca)
-*The above gif, and the file `hello_world.FORTH`, are a modified version of the hello world program used to demonstrate sectorFORTH (see below)*
+*The code in the above gif, that of `hello_world.FORTH`, is a modified version of the hello world program used by sectorFORTH (see below)*
 
 ## bytes?
 
