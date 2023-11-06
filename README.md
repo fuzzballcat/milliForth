@@ -53,4 +53,4 @@ Alternatively, `make` will reassemble sector.asm, then run the above qemu emulat
 
 ## References
 [^1]: The immensely inspirational sectorForth, to which much credit is due: https://github.com/cesarblum/sectorforth/.
-[^2]: Mind-blowing sectorLISP: https://justine.lol/sectorlisp2/.
+[^2]: Mind-blowing sectorLISP: https://justine.lol/sectorlisp2/, https://github.com/jart/sectorlisp.
