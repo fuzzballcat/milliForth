@@ -2,8 +2,8 @@ import pyautogui
 import time
 
 pyautogui.typewrite(" ")
-print("Place cursor in QEMU window...")
-time.sleep(10)
+print("Place cursor in QEMU window and wait...")
+time.sleep(5)
 print("Now typing!")
 
 for line in open("hello_world.FORTH", "r"):
