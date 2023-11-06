@@ -14,7 +14,6 @@
 : drop dup - + ;
 : over sp@ 2 + @ ;
 : swap over over sp@ 6 + ! sp@ 2 + ! ;
-: nip swap drop ;
 : 2dup over over ;
 : 2drop drop drop ;
 : or invert swap invert and invert ;
@@ -31,10 +30,8 @@
 : >rexit rp@ ! ;
 : >r rp@ @ swap rp@ ! >rexit ;
 : r> rp@ 2 + @ rp@ @ rp@ 2 + ! lit [ here @ 6 + , ] rp@ ! ;
-: rot >r swap r> swap ;
 : if ['] ?branch , here @ 0 , ; immediate
 : then dup here @ swap - swap ! ; immediate
-: else ['] branch , here @ 0 , swap dup here @ swap - swap ! ; immediate
 : begin here @ ; immediate
 : while ['] ?branch , here @ 0 , ; immediate
 : repeat swap ['] branch , here @ - , dup here @ swap - swap ! ; immediate
@@ -44,8 +41,6 @@
 : 0fh lit [ 4 4 4 4 + + + 1 - , ] ;
 : ffh lit [ 0fh 2* 2* 2* 2* 0fh or , ] ;
 : c@ @ ffh and ;
-: c! dup @ ffh invert and rot ffh and or swap ! ;
-: c, here @ c! here @ 1 + here ! ;
 : type 0 do dup c@ emit 1 + loop drop ;
 : in> >in @ c@ >in dup @ 1 + swap ! ;
 : bl lit [ 1 2* 2* 2* 2* 2* , ] ;
