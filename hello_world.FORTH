@@ -5,10 +5,12 @@
 : 2 1 1 + ;
 : 4 2 2 + ;
 : 6 2 4 + ;
+: >in state@ 2 + ;
+: latest state@ 4 + ;
+: here state@ 6 + ;
 : invert dup nand ;
 : and nand invert ;
-: negate invert 1 + ;
-: - negate + ;
+: - invert 1 + + ;
 : = - 0= ;
 : <> = invert ;
 : drop dup - + ;
@@ -21,8 +23,8 @@
 : 2* dup + ;
 : 80h 1 2* 2* 2* 2* 2* 2* 2* ;
 : immediate latest @ 2 + dup @ 80h or swap ! ;
-: [ 1 state ! ; immediate
-: ] 0 state ! ;
+: [ 1 state@ ! ; immediate
+: ] 0 state@ ! ;
 : branch rp@ @ dup @ + rp@ ! ;
 : ?branch 0= rp@ @ @ 2 - and rp@ @ + 2 + rp@ ! ;
 : lit rp@ @ dup 2 + rp@ ! @ ;

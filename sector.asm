@@ -9,8 +9,8 @@ TIB equ 0x0000
 TIBP1 equ TIB+1
 STATE equ 0x1000 
 CIN equ 0x1002
-LATEST: dw word_SEMICOLON
-HERE:   dw here
+LATEST equ 0x1004
+HERE equ 0x1006
 FLAG_IMM equ 1<<7
 LEN_MASK equ (1<<5)-1 ; have some extra flags, why not
 
@@ -45,10 +45,8 @@ defword "rp@",RPFETCH
 
 defword "0=",ZEROEQ
 	pop ax
-	test ax,ax
-    setnz al
-    dec ax
-    cbw
+    sub ax,1
+	sbb ax,ax
     push ax
     jmp NEXT
 
@@ -73,14 +71,8 @@ defword "exit",EXIT
 	xchg sp,bp
 	jmp NEXT
 
-defword ">in",CINVAR
-    push word CIN
-    jmp NEXT
-
-defword "state",STATEVAR
+defword "state@",STATEVAR
     push word STATE
-    jmp NEXT
-
 NEXT:
 	lodsw
 	jmp ax
@@ -115,13 +107,6 @@ DOCOL:
 .addr:
 	dw DOCOL
 
-defword "here",HEREVAR
-	push word HERE
-	jmp NEXT
-defword "latest",LATESTVAR
-	push word LATEST
-	jmp NEXT
-
 defword "key",KEY
     mov ah,0
     int 0x16
@@ -149,6 +134,8 @@ main:
 	pop ds
 	pop es
 	pop ss
+	mov word [LATEST],word_SEMICOLON
+	mov word [HERE],here
 error:
 	mov ax,13
 	call putchar
@@ -189,6 +176,16 @@ find:
 	jz compile
 	jmp ax
 
+getline:
+	mov di,TIB
+.1:	call getchar
+	cmp al,10
+	je .2
+	stosb
+	jmp .1
+.2: mov ax, 0x0020
+	stosw
+	mov word [CIN],0
 tok:
 	mov di,[CIN]
 	mov al,32
@@ -207,17 +204,6 @@ tok:
 	dec cx
 	sub di,cx
 	ret
-getline:
-	mov di,TIB
-.1:	call getchar
-	cmp al,10
-	je .2
-	stosb
-	jmp .1
-.2: mov ax, 0x0020
-	stosw
-	mov word [CIN],0
-	jmp tok
 
 _find: dw find
 
