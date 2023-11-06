@@ -1,5 +1,9 @@
 	bits 16
+%ifdef COMPATIBLE_8088
+	cpu 8086
+%else
 	cpu 386
+%endif
 	jmp 0x0050:main
 	org 0x7700
 
@@ -43,9 +47,9 @@ defword "rp@",RPFETCH
 	push bp
 	jmp NEXT
 
-defword "0=",ZEROEQ
+defword "0#",ZEROEQ
 	pop ax
-    sub ax,1
+    neg ax
 	sbb ax,ax
     push ax
     jmp NEXT
@@ -71,8 +75,13 @@ defword "exit",EXIT
 	xchg sp,bp
 	jmp NEXT
 
-defword "state@",STATEVAR
-    push word STATE
+defword "s@",STATEVAR
+%ifdef COMPATIBLE_8088
+    mov ax,STATE
+    push ax
+%else
+	push word STATE
+%endif
 NEXT:
 	lodsw
 	jmp ax
@@ -101,8 +110,9 @@ DOCOL:
 	xchg sp,bp
 	push si
 	xchg sp,bp
-	add ax,4
-	mov si,ax
+	xchg ax,si
+	lodsw
+	lodsw
 	jmp NEXT
 .addr:
 	dw DOCOL

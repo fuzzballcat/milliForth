@@ -5,8 +5,8 @@ run:
 emulate:
 	qemu-system-i386 -fda sector.bin
 
-run_with_backspace:
-	yasm -f bin -o sector.bin sector.asm -D BACKSPACE
+with:
+	yasm -f bin -o sector.bin sector.asm $(options)
 	qemu-system-i386 -fda sector.bin
 
 prep:

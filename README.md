@@ -1,12 +1,12 @@
 # milliForth
-A FORTH in 386 bytes — the smallest real programming language ever, as of yet.
+A FORTH in 380 bytes — the smallest real programming language ever, as of yet.
 
 ![milliFORTH_justhelloworld](https://github.com/fuzzballcat/milliForth/assets/57006511/ef3d48cf-1581-4574-8625-8d97b00acaca)
 *The code in the above gif, that of \[an older version of\] `hello_world.FORTH`, is a modified version of the hello world program used by sectorFORTH (see below)*
 
 ## bytes?
 
-Yes, bytes.  This is a FORTH so small it fits in a 512-byte boot sector.  This isn't new — sectorFORTH[^1] successfully fit a FORTH within the boot sector.  However, milliFORTH appears to be *the smallest* "real" programming language implementation ever, beating out sectorLISP[^2], a mind-blowing 436 byte implementation of LISP, by 50 bytes.  ("real" excludes esolangs and other non-production languages - for example, the sectorLISP author's implementation of BF is just 99 bytes, and their binary lambda calculus implementation is 383 bytes, but neither language is used to any serious capacity.)
+Yes, bytes.  This is a FORTH so small it fits in a 512-byte boot sector.  This isn't new — sectorFORTH[^1] successfully fit a FORTH within the boot sector.  However, milliFORTH appears to be *the smallest* "real" programming language implementation ever, beating out sectorLISP[^2], a mind-blowing 436 byte implementation of LISP, by 56 bytes.  ("real" excludes esolangs and other non-production languages - for example, the sectorLISP author's implementation of BF is just 99 bytes, and their binary lambda calculus implementation is 383 bytes, but neither language is used to any serious capacity.)
 
 ## Language
 
@@ -26,11 +26,11 @@ FORTH itself will not be explained here (prior understanding assumed).  Being so
 | `exit` | `( r:addr -- )` | Pop from the return stack, resume execution at the popped address |
 | `key` | `( -- key )` | Read a keystroke |
 | `emit` | `( char -- )` | Print out an ASCII character |
-| `state@` | `( -- state@ )` | The "state struct" pointer.  The cells of this struct are, in order: <ul><li>`state`: The state of the interpreter (0 = compile words, 1 = execute words)</li><li>`>in`: Pointer to the current offset into the terminal input buffer</li><li>`latest`: The pointer to the most recent dictionary space</li><li>`here`: The pointer to the next available space in the dictionary</li></ul> |
+| `s@` | `( -- s@ )` | The "state struct" pointer.  The cells of this struct are, in order: <ul><li>`state`: The state of the interpreter (0 = compile words, 1 = execute words)</li><li>`>in`: Pointer to the current offset into the terminal input buffer</li><li>`latest`: The pointer to the most recent dictionary space</li><li>`here`: The pointer to the next available space in the dictionary</li></ul> |
 
 On a fundamental level, milliFORTH the same FORTH as implemented by sectorFORTH, with a few modifications:
 
-- All of the interpreter state words are bundled into a single struct (`state@`).
+- All of the interpreter state words are bundled into a single struct (`s@`).
 - Words don't get hidden while you are defining them.  This doesn't really hinder your actual ability to write programs, but rather makes it possible to hang the interpreter if you do something wrong in this respect.
 - There's no `tib` (terminal input buffer) word, because `tib` always starts at `0x0000`, so you can just use `>in` and don't need to add anything to it.
 - In the small (production) version, the delete key doesn't work.  I think this is fair since sectorLISP doesn't handle backspace either; even if you add it back, milliFORTH is still smaller by a few bytes.
