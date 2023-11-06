@@ -38,17 +38,13 @@ On a fundamental level, milliFORTH the same FORTH as implemented by sectorFORTH,
 
 ## Use
 
-sector.bin is an assembled binary of sector.asm.  You can run it using `qemu-system-i386 -fda sector.bin` (as found in the makefile), or by using any emulator of your choice.
+sector.bin is an assembled binary of sector.asm.  You can run it using `make emulate`, which invokes (and thus requires) `qemu-system-i386`, or by using any emulator of your choice.
 
 Alternatively, `make` will reassemble sector.asm, then run the above qemu emulator.
 
 **Included in this repo is a pyautogui script** which can be run to automatically type in the `hello_world.FORTH` file into your qemu emulator.  A very useful tool.  It is self-explaining, but usage involves simply starting the QEMU emulator, running the python script, and putting your cursor into the QEMU emulator again.
 
-`make sizecheck` is a utility which assembles sector.asm and then lists files including size.  This is useful for checking binary size.  Note that it will always return 512, as bootloaders must have a fixed size of 512 bytes; to view the true size, the following two lines must be commented at the end of sector.asm:
-```
-; times 510-($-$$) db 0
-; db 0x55, 0xaa
-```
+`make sizecheck` is a utility which assembles sector.asm into sector.bin and then lists out the size of sector.bin for you.  Note that this automatically removes the padding from the .bin (as a working bootloader must be exactly 512 bytes).
 
 ## References
 [^1]: The immensely inspirational sectorForth, to which much credit is due: https://github.com/cesarblum/sectorforth/.

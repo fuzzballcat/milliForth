@@ -222,17 +222,21 @@ putchar:
 ; Since sectorLISP does not handle the delete key, I have commented them out for a fair comparison of size.
 ; Even when re-added, this FORTH is still smaller, however.
 
-;	cmp al,8
-;	jne .2
-;	cmp di,TIB
-;	je .3
-;	dec di
-;.3:	jmp getchar
-;.2:
+%ifdef BACKSPACE
+	cmp al,8
+	jne .2
+	cmp di,TIB
+	je .3
+	dec di
+.3:	jmp getchar
+.2:
+%endif
 
 	ret
 
+%ifndef CHECKSIZE
 times 510-($-$$) db 0
 db 0x55, 0xaa
+%endif
 
 here:
