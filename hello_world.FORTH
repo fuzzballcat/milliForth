@@ -1,5 +1,5 @@
 : dup sp@ @ ;
-: -1 dup dup nand dup dup nand nand ;
+: -1 s@ s@ nand s@ nand ;
 : 0 -1 dup nand ;
 : 1 -1 dup + dup nand ;
 : 2 1 1 + ;
