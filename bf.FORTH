@@ -56,20 +56,12 @@
 : variable create 1 cells allot ;
 
 : 48 lit [ 6 6 + 6 + 6 + 6 + 6 + 6 + 6 + , ] ;
-: MINUS lit [ 48 2 - 1 - , ] ;
-: PLUS lit [ MINUS 2 - , ] ;
-: LESSTHAN lit [ 6 6 + 6 + 6 + 6 + 6 + 6 + 6 + 6 + 6 + , ] ;
-: GREATERTHAN lit [ LESSTHAN 2 + , ] ;
-: PERIOD lit [ 48 2 - , ] ;
-: OPENBRACKET lit [ 48 48 + 6 - 1 + , ] ;
-: CLOSEBRACKET lit [ OPENBRACKET 2 + , ] ;
-: COMMA lit [ 48 4 - , ] ;
 
 variable tape_head
 variable loop_depth
 variable parse_index
 
-: runbf 0 parse_index ! begin parse_index @ c@ dup dup dup dup dup dup dup COMMA = if key tape_head @ ! then MINUS = if tape_head @ @ 1 - tape_head @ ! then PLUS = if tape_head @ @ 1 + tape_head @ ! then LESSTHAN = if tape_head @ 2 - tape_head ! then GREATERTHAN = if tape_head @ 2 + tape_head ! then PERIOD = if tape_head @ @ emit then OPENBRACKET = tape_head @ @ 0 = and if 1 loop_depth ! begin parse_index @ 1 + parse_index ! parse_index @ c@ dup OPENBRACKET = if loop_depth @ 1 + loop_depth ! then CLOSEBRACKET = if loop_depth @ 1 - loop_depth ! then loop_depth @ 0 = until then CLOSEBRACKET = tape_head @ @ 0 <> and if 1 loop_depth ! begin parse_index @ 1 - parse_index ! parse_index @ c@ dup OPENBRACKET = if loop_depth @ 1 - loop_depth ! then CLOSEBRACKET = if loop_depth @ 1 + loop_depth ! then loop_depth @ 0 = until then parse_index @ 1 + parse_index ! dup parse_index @ = until drop ;
+: runbf 0 parse_index ! begin parse_index @ c@ dup dup dup dup dup dup dup [char] , = if key tape_head @ ! then [char] - = if tape_head @ @ 1 - tape_head @ ! then [char] + = if tape_head @ @ 1 + tape_head @ ! then [char] < = if tape_head @ 2 - tape_head ! then [char] > = if tape_head @ 2 + tape_head ! then [char] . = if tape_head @ @ emit then [char] [ = tape_head @ @ 0 = and if 1 loop_depth ! begin parse_index @ 1 + parse_index ! parse_index @ c@ dup [char] [ = if loop_depth @ 1 + loop_depth ! then [char] ] = if loop_depth @ 1 - loop_depth ! then loop_depth @ 0 = until then [char] ] = tape_head @ @ 0 <> and if 1 loop_depth ! begin parse_index @ 1 - parse_index ! parse_index @ c@ dup [char] [ = if loop_depth @ 1 - loop_depth ! then [char] ] = if loop_depth @ 1 + loop_depth ! then loop_depth @ 0 = until then parse_index @ 1 + parse_index ! dup parse_index @ = until drop ;
 : BF( [char] ) parse runbf ; immediate
 here @ 48 + tape_head !
 
