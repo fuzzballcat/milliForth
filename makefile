@@ -2,6 +2,11 @@ run:
 	yasm -f bin -o sector.bin sector.asm
 	qemu-system-i386 -fda sector.bin
 
+runfile:
+	rm -f /tmp/sector.in /tmp/sector.out
+	mkfifo /tmp/sector.in /tmp/sector.out
+	(sleep 1; python3 py_autotype.py $(file)) | qemu-system-i386 -nographic -fda sector.bin
+
 emulate:
 	qemu-system-i386 -fda sector.bin
 

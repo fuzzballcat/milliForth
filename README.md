@@ -8,6 +8,10 @@ A FORTH in 380 bytes — the smallest real programming language ever, as of yet.
 
 Yes, bytes.  This is a FORTH so small it fits in a 512-byte boot sector.  This isn't new — sectorFORTH[^1] successfully fit a FORTH within the boot sector.  However, milliFORTH appears to be *the smallest* "real" programming language implementation ever, beating out sectorLISP[^2], a mind-blowing 436 byte implementation of LISP, by 56 bytes.  ("real" excludes esolangs and other non-production languages - for example, the sectorLISP author's implementation of BF is just 99 bytes, but it clearly isn't used to any serious capacity.)
 
+## Is it turing-complete?
+
+Yes!  This project now includes `bf.FORTH`, a compliant brainfuck interpreter, to illlustrate that this is truly a real language.
+
 ## Language
 
 sectorFORTH[^1] was an extensive guide throughout the process of implementing milliFORTH, and milliFORTH's design actually converged on sectorFORTH unintentionally in a few areas.  That said, the language implemented is intentionally very similar, being the 'minimal FORTH'.
@@ -42,7 +46,7 @@ sector.bin is an assembled binary of sector.asm.  You can run it using `make emu
 
 Alternatively, `make` will reassemble sector.asm, then run the above qemu emulator.
 
-**Included in this repo is a pyautogui script** which can be run to automatically type in the `hello_world.FORTH` file into your qemu emulator.  A very useful tool.  It is self-explaining, but usage involves simply starting the QEMU emulator, running the python script, and putting your cursor into the QEMU emulator again.
+Additionally, you can run an example file easily by running `make runfile file=SOURCE_CODE`.  Try out `make runfile file=hello_world.FORTH` or `make runfile file=bf.FORTH`!  *NOTE: Files run this way currently do not accept user input from stdin, as the file itself is being piped to qemu.  Fix coming shortly.*
 
 `make sizecheck` is a utility which assembles sector.asm into sector.bin and then lists out the size of sector.bin for you.  Note that this automatically removes the padding from the .bin (as a working bootloader must be exactly 512 bytes).
 
