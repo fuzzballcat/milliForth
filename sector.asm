@@ -11,10 +11,6 @@ RSTACK_BASE equ 0x76fe
 STACK_BASE equ 0xfffe
 TIB equ 0x0000
 TIBP1 equ TIB+1
-STATE equ 0x1000 
-CIN equ 0x1002
-LATEST equ 0x1004
-HERE equ 0x1006
 FLAG_IMM equ 1<<7
 LEN_MASK equ (1<<5)-1 ; have some extra flags, why not
 
@@ -144,8 +140,6 @@ main:
 	pop ds
 	pop es
 	pop ss
-	mov word [LATEST],word_SEMICOLON
-	mov word [HERE],here
 error:
 	mov ax,13
 	call putchar
@@ -243,6 +237,13 @@ putchar:
 %endif
 
 	ret
+
+	align 2
+STATE	db 1
+	align 2
+CIN	dw 0
+LATEST	dw word_SEMICOLON
+HERE	dw here
 
 %ifndef CHECKSIZE
 times 510-($-$$) db 0
