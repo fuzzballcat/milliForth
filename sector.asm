@@ -51,23 +51,22 @@ defword "0#",ZEROEQ
 	pop ax
     neg ax
 	sbb ax,ax
-    push ax
-    jmp NEXT
+	jmp pushax
 
 defword "+",PLUS
     pop bx
     pop ax
     add ax,bx
-    push ax
-    jmp NEXT
+	jmp pushax
 
 defword "nand",NAND
     pop bx
     pop ax
     and ax,bx
     not ax
-    push ax
-    jmp NEXT
+pushax:
+	push ax
+	jmp NEXT
 
 defword "exit",EXIT
 	xchg sp,bp
@@ -90,9 +89,9 @@ defword ":",COLON
 	call tok
 	push si
 	mov si,di
-	mov di,[HERE]
-	mov ax,[LATEST]
-	mov [LATEST],di
+	mov di,[bx+HERE-CIN]
+	mov ax,[bx+LATEST-CIN]
+	mov [bx+LATEST-CIN],di
 	stosw
 	mov al,cl
 	stosb
@@ -101,8 +100,8 @@ defword ":",COLON
 	stosw
 	mov ax,DOCOL.addr
     stosw 
-    mov [HERE],di
-    mov byte [STATE],0
+    mov [bx+HERE-CIN],di
+    mov byte [bx+STATE-CIN],cl
     pop si
     jmp NEXT
 
@@ -152,23 +151,28 @@ error:
 exec:
 	mov sp,STACK_BASE
 	mov bp,RSTACK_BASE
-	mov byte [STATE],1
-	mov byte [TIB],0
+	xor bx,bx ;mov bx,TIB
+	mov byte [bx],bl
+	inc bx
+	mov byte [STATE],bl
 
 find:
 	call tok
 
-	mov bx,[LATEST]
-.1:	test bx,bx
+	inc bx
+	inc bx ;mov bx,LATEST
+.1:	mov bx,[bx]
+        test bx,bx
 	jz error
 
 	mov si,bx
 	lodsw
 	lodsb
-	mov dl,al
+	push ax
 	and al,LEN_MASK
 	cmp al,cl
-	jne .2
+	pop ax
+	jne .1
 
 	push cx
 	push di
@@ -176,32 +180,32 @@ find:
 	pop di
 	pop cx
 
-	je .3
-.2:	mov bx,[bx]
-	jmp .1
-.3: mov ax,si
+	jne .1
+	and al,FLAG_IMM
+	or al,[STATE]
+	xchg si,ax
 	mov si,_find
-	and dl,FLAG_IMM
-	or dl,[STATE]
 	jz compile
 	jmp ax
 
+storebyte:
+	stosb
+	db 0x3d ;mask xor di,di
 getline:
-	mov di,TIB
+	xor di,di ;mov di,TIB
 .1:	call getchar
 	cmp al,10
-	je .2
-	stosb
-	jmp .1
-.2: mov ax, 0x0020
+	jne storebyte
+	mov ax, 0x0020
 	stosw
-	mov word [CIN],0
+	and word [CIN],0
 tok:
-	mov di,[CIN]
+	mov bx,CIN
+	mov di,[bx]
 	mov al,32
-	mov cx,-1
 
-	repe scasb
+.1:	scasb
+	je .1
 	dec di
 	cmp byte [di],0
 	je getline
@@ -209,7 +213,7 @@ tok:
 
 	repne scasb
 	dec di
-	mov [CIN],di
+	mov [bx],di
 	not cx
 	dec cx
 	sub di,cx
