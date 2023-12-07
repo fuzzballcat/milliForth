@@ -128,7 +128,7 @@ defword "emit",EMIT
     jmp NEXT
 
 defword ";",SEMICOLON,FLAG_IMM
-	mov byte [STATE],1
+	mov byte [STATE],cl
 	mov ax, EXIT
 compile:
 	mov di,[HERE]
