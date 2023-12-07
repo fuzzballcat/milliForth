@@ -4,11 +4,12 @@
 %else
 	cpu 386
 %endif
-	jmp 0x0050:main
+	db 0eah
+        dw main ;jmp 0x0050:main but reusing the segment as sentinel
 	org 0x7700
 
-RSTACK_BASE equ 0x76fe
-STACK_BASE equ 0xfffe
+RSTACK_BASE equ 0x7700
+STACK_BASE equ 0 ; stack subtracts before write so first goes to 0xFFFE
 TIB equ 0x0000
 TIBP1 equ TIB+1
 STATE equ 0x1000 
@@ -18,7 +19,7 @@ HERE equ 0x1006
 FLAG_IMM equ 1<<7
 LEN_MASK equ (1<<5)-1 ; have some extra flags, why not
 
-%define link 0
+%define link 0x50
 %macro defword 2-3 0
 word_%2:
 	dw link
@@ -119,8 +120,7 @@ DOCOL:
 defword "key",KEY
     mov ah,0
     int 0x16
-    push ax
-    jmp NEXT
+    jmp pushax
 
 defword "emit",EMIT
     pop ax
@@ -146,10 +146,10 @@ main:
 	mov word [LATEST],word_SEMICOLON
 	mov word [HERE],here
 error:
-	mov ax,13
+	mov al,13
 	call putchar
 exec:
-	mov sp,STACK_BASE
+	xor sp, sp ; mov sp,STACK_BASE
 	mov bp,RSTACK_BASE
 	xor bx,bx ;mov bx,TIB
 	mov byte [bx],bl
@@ -162,7 +162,7 @@ find:
 	inc bx
 	inc bx ;mov bx,LATEST
 .1:	mov bx,[bx]
-        test bx,bx
+        test bh,bh
 	jz error
 
 	mov si,bx
@@ -221,6 +221,12 @@ tok:
 
 _find: dw find
 
+%ifdef BACKSPACE
+testdi:	test di,di ; cmp di,TIB
+	je getchar
+	dec di
+%endif
+
 getchar:
 	xor	ax,ax
 	int 0x16
@@ -238,12 +244,7 @@ putchar:
 
 %ifdef BACKSPACE
 	cmp al,8
-	jne .2
-	cmp di,TIB
-	je .3
-	dec di
-.3:	jmp getchar
-.2:
+	je testdi
 %endif
 
 	ret
