@@ -118,7 +118,7 @@ DOCOL:
 	dw DOCOL
 
 defword "key",KEY
-    mov ah,0
+    xchg cx,ax ; ah=0
     int 0x16
     jmp pushax
 
