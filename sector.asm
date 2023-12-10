@@ -161,12 +161,11 @@ find:
 
 	inc bx
 	inc bx ;mov bx,LATEST
-.1:	mov bx,[bx]
-        test bh,bh
-	jz error
-
-	mov si,bx
+.1:	mov si,bx
 	lodsw
+        test ah,ah
+	jz error
+        xchg bx,ax
 	lodsb
 	push ax
 	and al,LEN_MASK
