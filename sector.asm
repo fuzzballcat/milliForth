@@ -31,13 +31,13 @@ word_%2:
 %endmacro
 
 defword "@",FETCH
-	pop bx
-	push word [bx]
+	pop di
+	push word [di]
 	jmp NEXT
 
 defword "!",STORE
-	pop bx
-	pop word [bx]
+	pop di
+	pop word [di]
 	jmp NEXT
 
 defword "sp@",SPFETCH
@@ -45,7 +45,7 @@ defword "sp@",SPFETCH
 	jmp NEXT
 
 defword "rp@",RPFETCH
-	push bp
+	push dx
 	jmp NEXT
 
 defword "0#",ZEROEQ
@@ -55,33 +55,28 @@ defword "0#",ZEROEQ
 	jmp pushax
 
 defword "+",PLUS
-    pop bx
+    pop di
     pop ax
-    add ax,bx
+    add ax,di
 	jmp pushax
 
 defword "nand",NAND
-    pop bx
+    pop di
     pop ax
-    and ax,bx
+    and ax,di
     not ax
 pushax:
 	push ax
 	jmp NEXT
 
 defword "exit",EXIT
-	xchg sp,bp
+	xchg sp,dx
 	pop si
-	xchg sp,bp
+	xchg sp,dx
 	jmp NEXT
 
 defword "s@",STATEVAR
-%ifdef COMPATIBLE_8088
-    mov ax,STATE
-    push ax
-%else
-	push word STATE
-%endif
+    push bx
 NEXT:
 	lodsw
 	jmp ax
@@ -90,9 +85,9 @@ defword ":",COLON
 	call tok
 	push si
 	mov si,di
-	mov di,[bx+HERE-CIN]
-	mov ax,[bx+LATEST-CIN]
-	mov [bx+LATEST-CIN],di
+	mov di,[bx+HERE-STATE]
+	mov ax,[bx+LATEST-STATE]
+	mov [bx+LATEST-STATE],di
 	stosw
 	mov al,cl
 	stosb
@@ -101,15 +96,15 @@ defword ":",COLON
 	stosw
 	mov ax,DOCOL.addr
     stosw 
-    mov [bx+HERE-CIN],di
-    mov byte [bx+STATE-CIN],cl
+    mov [bx+HERE-STATE],di
+    mov byte [bx],cl
     pop si
     jmp NEXT
 
 DOCOL:
-	xchg sp,bp
+	xchg sp,dx
 	push si
-	xchg sp,bp
+	xchg sp,dx
 	xchg ax,si
 	lodsw
 	lodsw
@@ -128,12 +123,12 @@ defword "emit",EMIT
     jmp NEXT
 
 defword ";",SEMICOLON,FLAG_IMM
-	mov byte [STATE],cl
+	mov byte [bx],cl
 	mov ax, EXIT
 compile:
-	mov di,[HERE]
+	mov di,[bx+HERE-STATE]
 	stosw
-	mov [HERE],di
+	mov [bx+HERE-STATE],di
 	jmp NEXT
 
 main:
@@ -143,29 +138,29 @@ main:
 	pop ds
 	pop es
 	pop ss
-	mov word [LATEST],word_SEMICOLON
-	mov word [HERE],here
+	mov bx,STATE
+	mov word [bx+LATEST-STATE],word_SEMICOLON
+	mov word [bx+HERE-STATE],here
 error:
 	mov al,13
 	call putchar
 exec:
-	xor sp, sp ; mov sp,STACK_BASE
-	mov bp,RSTACK_BASE
-	xor bx,bx ;mov bx,TIB
-	mov byte [bx],bl
-	inc bx
-	mov byte [STATE],bl
+	xor sp,sp ; mov sp,STACK_BASE
+	mov dx,RSTACK_BASE
+	xor si,si ;mov si,TIB
+	mov [si],si
+	inc si
+	mov [bx],si
 
 find:
 	call tok
 
-	inc bx
-	inc bx ;mov bx,LATEST
-.1:	mov si,bx
+	lea bp,[bx+LATEST-STATE]
+.1:	mov si,bp
 	lodsw
         test ah,ah
 	jz error
-        xchg bx,ax
+        xchg bp,ax
 	lodsb
 	push ax
 	and al,LEN_MASK
@@ -181,7 +176,7 @@ find:
 
 	jne .1
 	and al,FLAG_IMM
-	or al,[STATE]
+	or al,[bx]
 	xchg si,ax
 	mov si,_find
 	jz compile
@@ -197,10 +192,9 @@ getline:
 	jne storebyte
 	mov ax, 0x0020
 	stosw
-	and word [CIN],0
+	and word [bx+CIN-STATE],0
 tok:
-	mov bx,CIN
-	mov di,[bx]
+	mov di,[bx+CIN-STATE]
 	mov al,32
 
 .1:	scasb
@@ -212,7 +206,7 @@ tok:
 
 	repne scasb
 	dec di
-	mov [bx],di
+	mov [bx+CIN-STATE],di
 	not cx
 	dec cx
 	sub di,cx
