@@ -9,7 +9,7 @@
 	org 0x7700
 
 RSTACK_BASE equ 0x7700
-STACK_BASE equ 0 ; stack subtracts before write so first goes to 0xFFFE
+STACK_BASE equ 2
 TIB equ 0x0000
 TIBP1 equ TIB+1
 STATE equ 0x1000 
@@ -145,10 +145,10 @@ error:
 	mov al,13
 	call putchar
 exec:
-	xor sp,sp ; mov sp,STACK_BASE
+	mov sp,STACK_BASE
 	mov dx,RSTACK_BASE
 	xor si,si ;mov si,TIB
-	mov [si],si
+	push si ;mov [TIB],si
 	inc si
 	mov [bx],si
 
@@ -199,8 +199,7 @@ tok:
 
 .1:	scasb
 	je .1
-	dec di
-	cmp byte [di],0
+	cmp byte [di-1],0
 	je getline
 	mov cx,-1
 
@@ -208,7 +207,6 @@ tok:
 	dec di
 	mov [bx+CIN-STATE],di
 	not cx
-	dec cx
 	sub di,cx
 	ret
 
