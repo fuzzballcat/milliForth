@@ -1,12 +1,12 @@
 # milliForth
-A FORTH in 380 bytes — the smallest real programming language ever, as of yet.
+A FORTH in 340 bytes — the smallest real programming language ever, as of yet.
 
 ![milliFORTH_justhelloworld](https://github.com/fuzzballcat/milliForth/assets/57006511/ef3d48cf-1581-4574-8625-8d97b00acaca)
 *The code in the above gif, that of \[an older version of\] `hello_world.FORTH`, is a modified version of the hello world program used by sectorFORTH (see below)*
 
 ## bytes?
 
-Yes, bytes.  This is a FORTH so small it fits in a 512-byte boot sector.  This isn't new — sectorFORTH[^1] successfully fit a FORTH within the boot sector.  However, milliFORTH appears to be *the smallest* "real" programming language implementation ever, beating out sectorLISP[^2], a mind-blowing 436 byte implementation of LISP, by 56 bytes.  ("real" excludes esolangs and other non-production languages - for example, the sectorLISP author's implementation of BF is just 99 bytes, but it clearly isn't used to any serious capacity.)
+Yes, bytes.  This is a FORTH so small it fits in a 512-byte boot sector.  This isn't new — sectorFORTH[^1] successfully fit a FORTH within the boot sector.  However, milliFORTH appears to be *the smallest* "real" programming language implementation ever, beating out sectorLISP[^2], a mind-blowing 436 byte implementation of LISP, by 96 bytes.  ("real" excludes esolangs and other non-production languages - for example, the sectorLISP author's implementation of BF is just 99 bytes, but it clearly isn't used to any serious capacity.)  It's now even smaller thanks to some really neat suggestions!
 
 ## Is it turing-complete?
 
