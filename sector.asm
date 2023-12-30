@@ -158,9 +158,9 @@ find:
 	lea bp,[bx+LATEST-STATE]
 .1:	mov si,bp
 	lodsw
+        xchg bp,ax
         test ah,ah
 	jz error
-        xchg bp,ax
 	lodsb
 	push ax
 	and al,LEN_MASK
