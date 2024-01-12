@@ -222,11 +222,11 @@ getchar:
 	int 0x16
 putchar:
 	mov ah,0x0e
-	cmp al,13
-	jne .1
+	db 0x3d ;mask mov al,10
+.1:	mov al,10
 	int 0x10
-	mov al,10
-.1:	int 0x10
+	cmp al,13
+	je .1
 
 ; The below lines are a "QOL" improvement: the delete key.
 ; Since sectorLISP does not handle the delete key, I have commented them out for a fair comparison of size.
