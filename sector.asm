@@ -141,10 +141,9 @@ main:
 	mov word [bx+LATEST-STATE],word_SEMICOLON
 	mov word [bx+HERE-STATE],here
 error:
+	mov sp,STACK_BASE
 	mov al,13
 	call putchar
-exec:
-	mov sp,STACK_BASE
 	mov dx,RSTACK_BASE
 	xor si,si ;mov si,TIB
 	push si ;mov [TIB],si
@@ -186,19 +185,19 @@ storebyte:
 	db 0x3d ;mask xor di,di
 getline:
 	xor di,di ;mov di,TIB
-.1:	call getchar
+	call getchar
+	and word [bx+CIN-STATE],di
 	cmp al,10
 	jne storebyte
 	mov ax, 0x0020
 	stosw
-	and word [bx+CIN-STATE],0
 tok:
 	mov di,[bx+CIN-STATE]
 	mov al,32
 
 .1:	scasb
 	je .1
-	cmp byte [di-1],0
+	cmp byte [di-1],bl
 	je getline
 	mov cx,-1
 
