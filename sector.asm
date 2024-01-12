@@ -72,8 +72,7 @@ pushax:
 defword "exit",EXIT
 	xchg sp,dx
 	pop si
-	xchg sp,dx
-	jmp NEXT
+	jmp DOCOL.swapsp
 
 defword "s@",STATEVAR
     push bx
@@ -102,10 +101,11 @@ defword ":",COLON
 DOCOL:
 	xchg sp,dx
 	push si
-	xchg sp,dx
 	xchg ax,si
 	lodsw
 	lodsw
+.swapsp:
+	xchg sp,dx
 	jmp NEXT
 .addr:
 	dw DOCOL
