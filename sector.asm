@@ -12,7 +12,7 @@ RSTACK_BASE equ 0x7700
 STACK_BASE equ 2
 TIB equ 0x0000
 TIBP1 equ TIB+1
-STATE equ 0x1000 
+STATE equ 0x1000  ; must be 256-bytes aligned
 CIN equ 0x1002
 LATEST equ 0x1004
 HERE equ 0x1006
@@ -84,9 +84,9 @@ defword ":",COLON
 	call tok
 	push si
 	mov si,di
-	mov di,[bx+HERE-STATE]
-	mov ax,[bx+LATEST-STATE]
-	mov [bx+LATEST-STATE],di
+	mov ax,[bx+HERE-STATE]
+	mov di,ax
+	xchg [bx+LATEST-STATE],ax
 	stosw
 	mov al,cl
 	stosb
