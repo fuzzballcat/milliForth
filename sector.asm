@@ -92,14 +92,12 @@ defword ":",COLON
 	mov al,cl
 	stosb
 	rep movsb
+	pop si
+	mov byte [bx],cl
 	mov ax,0x26ff
 	stosw
 	mov ax,DOCOL.addr
-    stosw 
-    mov [bx+HERE-STATE],di
-    mov byte [bx],cl
-    pop si
-    jmp NEXT
+	jmp sethere
 
 DOCOL:
 	xchg sp,dx
@@ -127,6 +125,7 @@ defword ";",SEMICOLON,FLAG_IMM
 	mov ax, EXIT
 compile:
 	mov di,[bx+HERE-STATE]
+sethere:
 	stosw
 	mov [bx+HERE-STATE],di
 	jmp NEXT
