@@ -195,16 +195,16 @@ tok:
 	mov di,[bx+CIN-STATE]
 	mov al,32
 
-.1:	scasb
-	je .1
-	cmp byte [di-1],bl
+.1:	cmp byte [di],bl
 	je getline
-	mov cx,-1
-
-	repne scasb
+	scasb
+	je .1
+	xor cx,cx
+.2:	inc cx
+	scasb
+	jne .2
 	dec di
 	mov [bx+CIN-STATE],di
-	not cx
 	sub di,cx
 	ret
 
