@@ -1,5 +1,5 @@
 # milliForth
-A FORTH in 340 bytes — the smallest real programming language ever, as of yet.
+A FORTH in 336 bytes — the smallest real programming language ever, as of yet.
 
 ![milliFORTH_justhelloworld](https://github.com/fuzzballcat/milliForth/assets/57006511/ef3d48cf-1581-4574-8625-8d97b00acaca)
 *The code in the above gif, that of \[an older version of\] `hello_world.FORTH`, is a modified version of the hello world program used by sectorFORTH (see below)*
@@ -24,7 +24,7 @@ FORTH itself will not be explained here (prior understanding assumed).  Being so
 | `!` | `( value addr -- )` | Store a value at an address |
 | `sp@` | `( -- sp )` | Get pointer to top of the data stack |
 | `rp@` | `( -- rp )` | Get pointer to top of the return stack |
-| `0=` | `( value -- flag )` | Check if a value equals zero (-1 = TRUE, 0 = FALSE) |
+| `0#` | `( value -- flag )` | Check if a value does not equal zero (-1 = TRUE, 0 = FALSE) |
 | `+` | `( a b -- a+b )` | Sum two numbers |
 | `nand` | `( a b -- aNANDb )` | NAND two numbers |
 | `exit` | `( r:addr -- )` | Pop from the return stack, resume execution at the popped address |
