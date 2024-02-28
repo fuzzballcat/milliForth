@@ -12,7 +12,7 @@ RSTACK_BASE equ 0x7700
 STACK_BASE equ 2
 TIB equ 0x0000
 TIBP1 equ TIB+1
-STATE equ 0x1000 
+STATE equ 0x1000  ; must be 256-bytes aligned
 CIN equ 0x1002
 LATEST equ 0x1004
 HERE equ 0x1006
@@ -72,8 +72,7 @@ pushax:
 defword "exit",EXIT
 	xchg sp,dx
 	pop si
-	xchg sp,dx
-	jmp NEXT
+	jmp DOCOL.swapsp
 
 defword "s@",STATEVAR
     push bx
@@ -85,29 +84,28 @@ defword ":",COLON
 	call tok
 	push si
 	mov si,di
-	mov di,[bx+HERE-STATE]
-	mov ax,[bx+LATEST-STATE]
-	mov [bx+LATEST-STATE],di
+	mov ax,[bx+HERE-STATE]
+	mov di,ax
+	xchg [bx+LATEST-STATE],ax
 	stosw
 	mov al,cl
 	stosb
 	rep movsb
+	pop si
+	mov byte [bx],cl
 	mov ax,0x26ff
 	stosw
 	mov ax,DOCOL.addr
-    stosw 
-    mov [bx+HERE-STATE],di
-    mov byte [bx],cl
-    pop si
-    jmp NEXT
+	jmp sethere
 
 DOCOL:
 	xchg sp,dx
 	push si
-	xchg sp,dx
 	xchg ax,si
 	lodsw
 	lodsw
+.swapsp:
+	xchg sp,dx
 	jmp NEXT
 .addr:
 	dw DOCOL
@@ -127,6 +125,7 @@ defword ";",SEMICOLON,FLAG_IMM
 	mov ax, EXIT
 compile:
 	mov di,[bx+HERE-STATE]
+sethere:
 	stosw
 	mov [bx+HERE-STATE],di
 	jmp NEXT
@@ -142,10 +141,9 @@ main:
 	mov word [bx+LATEST-STATE],word_SEMICOLON
 	mov word [bx+HERE-STATE],here
 error:
+	mov sp,STACK_BASE
 	mov al,13
 	call putchar
-exec:
-	mov sp,STACK_BASE
 	mov dx,RSTACK_BASE
 	xor si,si ;mov si,TIB
 	push si ;mov [TIB],si
@@ -187,26 +185,26 @@ storebyte:
 	db 0x3d ;mask xor di,di
 getline:
 	xor di,di ;mov di,TIB
-.1:	call getchar
+	call getchar
+	and word [bx+CIN-STATE],di
 	cmp al,10
 	jne storebyte
 	mov ax, 0x0020
 	stosw
-	and word [bx+CIN-STATE],0
 tok:
 	mov di,[bx+CIN-STATE]
 	mov al,32
 
-.1:	scasb
-	je .1
-	cmp byte [di-1],0
+.1:	cmp byte [di],bl
 	je getline
-	mov cx,-1
-
-	repne scasb
+	scasb
+	je .1
+	xor cx,cx
+.2:	inc cx
+	scasb
+	jne .2
 	dec di
 	mov [bx+CIN-STATE],di
-	not cx
 	sub di,cx
 	ret
 
@@ -223,11 +221,11 @@ getchar:
 	int 0x16
 putchar:
 	mov ah,0x0e
-	cmp al,13
-	jne .1
+	db 0x3d ;mask mov al,10
+.1:	mov al,10
 	int 0x10
-	mov al,10
-.1:	int 0x10
+	cmp al,13
+	je .1
 
 ; The below lines are a "QOL" improvement: the delete key.
 ; Since sectorLISP does not handle the delete key, I have commented them out for a fair comparison of size.
