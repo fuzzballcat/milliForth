@@ -78,6 +78,9 @@ defword "s@",STATEVAR
     push bx
 NEXT:
 	lodsw
+dispatch:
+	cmp ax,here ;primitives are < here
+	jae DOCOL
 	jmp ax
 
 defword ":",COLON
@@ -93,22 +96,15 @@ defword ":",COLON
 	rep movsb
 	pop si
 	mov byte [bx],cl
-	mov ax,0x26ff
-	stosw
-	mov ax,DOCOL.addr
 	jmp sethere
 
 DOCOL:
 	xchg sp,dx
 	push si
 	xchg ax,si
-	lodsw
-	lodsw
 .swapsp:
 	xchg sp,dx
 	jmp NEXT
-.addr:
-	dw DOCOL
 
 defword "key",KEY
     xchg cx,ax ; ah=0
@@ -125,8 +121,8 @@ defword ";",SEMICOLON,FLAG_IMM
 	mov ax, EXIT
 compile:
 	mov di,[bx+HERE-STATE]
-sethere:
 	stosw
+sethere:
 	mov [bx+HERE-STATE],di
 	jmp NEXT
 
@@ -178,7 +174,7 @@ find:
 	xchg si,ax
 	mov si,_find
 	jz compile
-	jmp ax
+	jmp dispatch
 
 storebyte:
 	stosb
